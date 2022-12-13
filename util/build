@@ -1,0 +1,42 @@
+#!/usr/bin/env python3
+
+import sys
+
+from generate import main as generate
+from setup import main as setup
+
+def print_help():
+    print('Usage: {} [generate|setup] [args]'.format(sys.argv[0]))
+
+def main():
+    if len(sys.argv) < 2:
+        exitCode = generate([])
+        if exitCode == 2:
+            print_help()
+        sys.exit(exitCode)
+    elif '--help' in sys.argv:
+        print_help()
+    elif sys.argv[1].startswith('-'):
+        exitCode = generate(sys.argv[1:])
+        if exitCode == 2:
+            print_help()
+        sys.exit(exitCode)
+    else:
+        command = sys.argv[1]
+        if command == 'generate':
+            exitCode = generate(sys.argv[2:])
+            if exitCode == 2:
+                print_help()
+            sys.exit(exitCode)
+        elif command == 'setup':
+            exitCode = setup(sys.argv[2:])
+            if exitCode == 2:
+                print_help()
+            sys.exit(exitCode)
+        else:
+            print('Unknown command: {}'.format(command))
+            print_help()
+            sys.exit(1)
+
+if __name__ == '__main__':
+    main()

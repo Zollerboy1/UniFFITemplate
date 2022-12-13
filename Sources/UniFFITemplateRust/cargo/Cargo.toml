@@ -1,0 +1,15 @@
+[package]
+name = "uniffi_template"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "uniffi_template"
+crate-type = ["staticlib", "cdylib"]
+
+[dependencies]
+uniffi = "0.21.0"
+uniffi_macros = "0.21.0"
+
+[build-dependencies]
+uniffi_build = "0.21.0"
