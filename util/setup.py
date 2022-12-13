@@ -160,8 +160,8 @@ def setup(project_name: str, project_type: ProjectType, git_repo: bool) -> int:
         with open(os.path.join(main_module_dir, 'ContentView.swift'), 'x') as f:
             f.write('import SwiftUI\nimport {}\n\n'.format(project_name + 'Bindings'))
             f.write('struct ContentView: View {\n')
-            f.write('    @State var a: UInt32 = 5\n')
-            f.write('    @State var b: UInt32 = 6\n\n')
+            f.write('    @State var a: Int32 = 5\n')
+            f.write('    @State var b: Int32 = 6\n\n')
             f.write('    var body: some View {\n')
             f.write('        VStack {\n')
             f.write('            Text("Add two numbers using Rust:")\n')

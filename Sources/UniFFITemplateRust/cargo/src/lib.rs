@@ -1,4 +1,4 @@
-pub fn add(a: u32, b: u32) -> u32 {
+pub fn add(a: i32, b: i32) -> i32 {
     a + b
 }
 
