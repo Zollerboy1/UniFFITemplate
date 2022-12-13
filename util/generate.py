@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+import shutil
 
 from utility import camel_to_snake, check_command
 
@@ -81,9 +82,7 @@ def main(args: list[str]) -> int:
     os.chdir(repo_dir)
 
     if os.path.exists(xcframework_path):
-        if os.system('rm -rf {}'.format(xcframework_path)) != 0:
-            print('Failed to remove old xcframework directory.')
-            return 1
+        shutil.rmtree(xcframework_path)
 
     if os.system('xcrun xcodebuild -create-xcframework -library {} -output {}'.format(os.path.join(cargo_dir, 'target', 'debug' if parsed_args.debug else 'release', 'lib' + project_name_snake + '.a'), xcframework_path)) != 0:
         print('Failed to create xcframework.')

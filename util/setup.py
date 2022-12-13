@@ -5,6 +5,7 @@ from enum import Enum
 import json
 import os
 import re
+import shutil
 
 from utility import camel_to_snake, check_command
 
@@ -68,7 +69,7 @@ def setup(project_name: str, project_type: ProjectType, git_repo: bool) -> int:
         print('This project has already been set up.')
         return 1
 
-    uniffi_version = os.popen('uniffi-bindgen --version').read().split(' ')[1]
+    uniffi_version = os.popen('uniffi-bindgen --version').read().split(' ')[1].strip()
 
     project_name_snake = camel_to_snake(project_name)
 
@@ -86,7 +87,7 @@ def setup(project_name: str, project_type: ProjectType, git_repo: bool) -> int:
     os.rename(os.path.join(sources_dir, 'UniFFITemplateBindings'), bindings_module_dir)
     os.rename(os.path.join(sources_dir, 'UniFFITemplateCBindings'), c_bindings_module_dir)
     os.rename(os.path.join(c_bindings_module_dir, 'UniFFITemplateCBindings.c'), c_bindings_path)
-    os.rename(os.path.join(c_bindings_module_dir, 'include', 'UniFFITemplateCBindings.c'), c_bindings_header_path)
+    os.rename(os.path.join(c_bindings_module_dir, 'include', 'UniFFITemplateCBindings.h'), c_bindings_header_path)
     os.rename(os.path.join(sources_dir, 'UniFFITemplateRust'), rust_module_dir)
     os.rename(os.path.join(cargo_src_dir, 'uniffi_template.udl'), udl_path)
 
@@ -106,6 +107,7 @@ def setup(project_name: str, project_type: ProjectType, git_repo: bool) -> int:
             content = content.replace('uniffi_template', project_name_snake)
             if file == 'Cargo.toml':
                 content = content.replace('uniffi = "0.21.0"', 'uniffi = "{}"'.format(uniffi_version))
+                content = content.replace('uniffi_macros = "0.21.0"', 'uniffi_macros = "{}"'.format(uniffi_version))
                 content = content.replace('uniffi_build = "0.21.0"', 'uniffi_build = "{}"'.format(uniffi_version))
             with open(path, 'w') as f:
                 f.write(content)
@@ -179,11 +181,13 @@ def setup(project_name: str, project_type: ProjectType, git_repo: bool) -> int:
 
 
     if git_repo:
-        os.remove(os.path.join(repo_dir, '.git'))
+        shutil.rmtree(os.path.join(repo_dir, '.git'))
         os.system('git init')
 
         with open(os.path.join(repo_dir, 'README.md'), 'w') as f:
-            f.write('# {}\n'.format(project_name))
+            f.write('# {}\n\n'.format(project_name))
+            f.write('This project was created using [UniFFITemplate](https://github.com/Zollerboy1/UniFFITemplate).\n\n')
+            f.write('To build the project, first run `./util/build [--release]` and then `swift build [-c release]`.\n')
 
     print('Done!')
 
@@ -208,10 +212,12 @@ def main(args: list[str]) -> int:
     print('Should a new git repository be setup? [Y/n] ', end='', flush=True)
 
     answer = getch()
-    while answer.lower() not in ('y', 'n', ''):
+    while answer.lower() not in ('y', 'n', '\r', '\n'):
         answer = getch()
 
     git_repo = answer.lower() != 'n'
+
+    print()
 
     return setup(project_name, project_type, git_repo)
 
