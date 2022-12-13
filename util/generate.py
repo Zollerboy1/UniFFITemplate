@@ -75,9 +75,17 @@ def main(args: list[str]) -> int:
         with open(path, 'w') as f:
             f.write(contents)
 
+    print('Successfully generated bindings for Cargo project {}.'.format(project_name_snake))
+
+    print('Building Cargo project {}...'.format(project_name_snake))
+
     if os.system('cargo build{}'.format('' if parsed_args.debug else ' --release')) != 0:
         print('Failed to build Cargo project.')
         return 1
+
+    print('Successfully built Cargo project {}.'.format(project_name_snake))
+
+    print('Creating xcframework...')
 
     os.chdir(repo_dir)
 
@@ -88,6 +96,6 @@ def main(args: list[str]) -> int:
         print('Failed to create xcframework.')
         return 1
 
-    print('Successfully generated bindings for Cargo project {}.'.format(project_name_snake))
+    print('Done.')
 
     return 0

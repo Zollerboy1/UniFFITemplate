@@ -187,7 +187,17 @@ def setup(project_name: str, project_type: ProjectType, git_repo: bool) -> int:
         with open(os.path.join(repo_dir, 'README.md'), 'w') as f:
             f.write('# {}\n\n'.format(project_name))
             f.write('This project was created using [UniFFITemplate](https://github.com/Zollerboy1/UniFFITemplate).\n\n')
-            f.write('To build the project, first run `./util/build [--release]` and then `swift build [-c release]`.\n')
+            f.write('To build your code, run the following commands:.\n\n')
+            f.write('```bash\n')
+            f.write('./util/build\n')
+            f.write('swift build\n')
+            f.write('```\n\n')
+            f.write('or.\n\n')
+            f.write('```bash\n')
+            f.write('./util/build --release\n')
+            f.write('swift build -c release\n')
+            f.write('```\n\n')
+            f.write('The build script will build the cargo package located at `Sources/{}Rust/cargo`, generate the Swift bindings for it, and put them into the right place so that `swift build` can find them.\n'.format(project_name))
 
     print('Done!')
 
