@@ -27,3 +27,5 @@ swift build -c release
 ```
 
 The build script will build the cargo package located at `Sources/<PROJECT_NAME>Rust/cargo`, generate the Swift bindings for it, and put them into the right place so that `swift build` can find them.
+
+Every time you have changed something in the cargo package (while keeping the `.udl` file up to date), you have to use `./util/build` again, so that the changes become visible in the Swift bindings.

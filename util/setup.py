@@ -197,7 +197,8 @@ def setup(project_name: str, project_type: ProjectType, git_repo: bool) -> int:
             f.write('./util/build --release\n')
             f.write('swift build -c release\n')
             f.write('```\n\n')
-            f.write('The build script will build the cargo package located at `Sources/{}Rust/cargo`, generate the Swift bindings for it, and put them into the right place so that `swift build` can find them.\n'.format(project_name))
+            f.write('The build script will build the cargo package located at `Sources/{}Rust/cargo`, generate the Swift bindings for it, and put them into the right place so that `swift build` can find them.\n\n'.format(project_name))
+            f.write('Every time you have changed something in the cargo package (while keeping the `.udl` file up to date), you have to use `./util/build` again, so that the changes become visible in the Swift bindings.\n')
 
     print('Done!')
 
