@@ -13,7 +13,7 @@ from utility import camel_to_snake, check_command
 class ProjectType(Enum):
     LIBRARY = 1
     EXECUTABLE = 2
-    SWIFTUI_APP = 3
+    # SWIFTUI_APP = 3
 
 
 def _find_getch() -> Callable[[], str]:
@@ -132,40 +132,40 @@ def setup(project_name: str, project_type: ProjectType, git_repo: bool) -> int:
 
         regexes_to_replace.append((re.compile(r'\.library\(([\s\n]*)name: "UniFFITemplate"'), r'.executable(\1name: "{}"'.format(project_name)))
         regexes_to_replace.append((re.compile(r'\.target\(([\s\n]*)name: "UniFFITemplate"'), r'.executableTarget(\1name: "{}"'.format(project_name)))
-    elif project_type == ProjectType.SWIFTUI_APP:
-        os.remove(os.path.join(main_module_dir, 'UniFFITemplate.swift'))
+    # elif project_type == ProjectType.SWIFTUI_APP:
+    #     os.remove(os.path.join(main_module_dir, 'UniFFITemplate.swift'))
 
-        with open(os.path.join(main_module_dir, '{}App.swift'.format(project_name)), 'x') as f:
-            f.write('import SwiftUI\n\n')
-            f.write('@main\n')
-            f.write('struct {}App: App {{\n'.format(project_name))
-            f.write('    var body: some Scene {\n')
-            f.write('        WindowGroup {\n')
-            f.write('            ContentView()\n')
-            f.write('        }\n')
-            f.write('    }\n')
-            f.write('}\n')
+    #     with open(os.path.join(main_module_dir, '{}App.swift'.format(project_name)), 'x') as f:
+    #         f.write('import SwiftUI\n\n')
+    #         f.write('@main\n')
+    #         f.write('struct {}App: App {{\n'.format(project_name))
+    #         f.write('    var body: some Scene {\n')
+    #         f.write('        WindowGroup {\n')
+    #         f.write('            ContentView()\n')
+    #         f.write('        }\n')
+    #         f.write('    }\n')
+    #         f.write('}\n')
 
-        with open(os.path.join(main_module_dir, 'ContentView.swift'), 'x') as f:
-            f.write('import SwiftUI\nimport {}\n\n'.format(project_name + 'Bindings'))
-            f.write('struct ContentView: View {\n')
-            f.write('    @State var a: UInt32 = 5\n')
-            f.write('    @State var b: UInt32 = 6\n\n')
-            f.write('    var body: some View {\n')
-            f.write('        VStack {\n')
-            f.write('            Text("Add two numbers using Rust:")\n')
-            f.write('            TextField("A", value: self.$a, formatter: NumberFormatter())\n')
-            f.write('                .textFieldStyle(.roundedBorder)\n')
-            f.write('            TextField("B", value: self.$b, formatter: NumberFormatter())\n')
-            f.write('                .textFieldStyle(.roundedBorder)\n')
-            f.write('            Divider()\n')
-            f.write('            Text("\\(self.a) + \\(self.b) = \\({}.add(a: self.a, b: self.b))")\n'.format(project_name + 'Bindings'))
-            f.write('        }.padding()\n')
-            f.write('    }\n')
-            f.write('}\n')
+    #     with open(os.path.join(main_module_dir, 'ContentView.swift'), 'x') as f:
+    #         f.write('import SwiftUI\nimport {}\n\n'.format(project_name + 'Bindings'))
+    #         f.write('struct ContentView: View {\n')
+    #         f.write('    @State var a: UInt32 = 5\n')
+    #         f.write('    @State var b: UInt32 = 6\n\n')
+    #         f.write('    var body: some View {\n')
+    #         f.write('        VStack {\n')
+    #         f.write('            Text("Add two numbers using Rust:")\n')
+    #         f.write('            TextField("A", value: self.$a, formatter: NumberFormatter())\n')
+    #         f.write('                .textFieldStyle(.roundedBorder)\n')
+    #         f.write('            TextField("B", value: self.$b, formatter: NumberFormatter())\n')
+    #         f.write('                .textFieldStyle(.roundedBorder)\n')
+    #         f.write('            Divider()\n')
+    #         f.write('            Text("\\(self.a) + \\(self.b) = \\({}.add(a: self.a, b: self.b))")\n'.format(project_name + 'Bindings'))
+    #         f.write('        }.padding()\n')
+    #         f.write('    }\n')
+    #         f.write('}\n')
 
-        regexes_to_replace.append((re.compile(r'\.library\(([\s\n]*)name: "UniFFITemplate"'), r'.executable(\1name: "{}"'.format(project_name)))
-        regexes_to_replace.append((re.compile(r'\.target\(([\s\n]*)name: "UniFFITemplate"'), r'.executableTarget(\1name: "{}"'.format(project_name)))
+    #     regexes_to_replace.append((re.compile(r'\.library\(([\s\n]*)name: "UniFFITemplate"'), r'.executable(\1name: "{}"'.format(project_name)))
+    #     regexes_to_replace.append((re.compile(r'\.target\(([\s\n]*)name: "UniFFITemplate"'), r'.executableTarget(\1name: "{}"'.format(project_name)))
 
 
     regexes_to_replace.append((re.compile(r'UniFFITemplate'), project_name))
@@ -187,12 +187,12 @@ def setup(project_name: str, project_type: ProjectType, git_repo: bool) -> int:
         with open(os.path.join(repo_dir, 'README.md'), 'w') as f:
             f.write('# {}\n\n'.format(project_name))
             f.write('This project was created using [UniFFITemplate](https://github.com/Zollerboy1/UniFFITemplate).\n\n')
-            f.write('To build your code, run the following commands:.\n\n')
+            f.write('To build your code, run the following commands:\n\n')
             f.write('```bash\n')
             f.write('./util/build\n')
             f.write('swift build\n')
             f.write('```\n\n')
-            f.write('or.\n\n')
+            f.write('or\n\n')
             f.write('```bash\n')
             f.write('./util/build --release\n')
             f.write('swift build -c release\n')
@@ -215,9 +215,13 @@ def main(args: list[str]) -> int:
     print('Available project types:')
     print('1. Library')
     print('2. Executable')
-    print('3. SwiftUI App')
+    # print('3. SwiftUI App')
     print('Project type: ', end='')
-    project_type = ProjectType(int(input()))
+    project_type_input = input()
+    while not project_type_input.isdigit() or int(project_type_input) not in (1, 2): # , 3):
+        print('Invalid project type. Please enter a number between 1 and 2: ', end='') # 3: ', end='')
+        project_type_input = input()
+    project_type = ProjectType(int(project_type_input))
 
     print('Should a new git repository be setup? [Y/n] ', end='', flush=True)
 
