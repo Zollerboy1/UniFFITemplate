@@ -13,7 +13,7 @@ from utility import camel_to_snake, check_command
 class ProjectType(Enum):
     LIBRARY = 1
     EXECUTABLE = 2
-    # SWIFTUI_APP = 3
+    SWIFTUI_APP = 3
 
 
 def _find_getch() -> Callable[[], str]:
@@ -132,40 +132,52 @@ def setup(project_name: str, project_type: ProjectType, git_repo: bool) -> int:
 
         regexes_to_replace.append((re.compile(r'\.library\(([\s\n]*)name: "UniFFITemplate"'), r'.executable(\1name: "{}"'.format(project_name)))
         regexes_to_replace.append((re.compile(r'\.target\(([\s\n]*)name: "UniFFITemplate"'), r'.executableTarget(\1name: "{}"'.format(project_name)))
-    # elif project_type == ProjectType.SWIFTUI_APP:
-    #     os.remove(os.path.join(main_module_dir, 'UniFFITemplate.swift'))
+    elif project_type == ProjectType.SWIFTUI_APP:
+        os.remove(os.path.join(main_module_dir, 'UniFFITemplate.swift'))
 
-    #     with open(os.path.join(main_module_dir, '{}App.swift'.format(project_name)), 'x') as f:
-    #         f.write('import SwiftUI\n\n')
-    #         f.write('@main\n')
-    #         f.write('struct {}App: App {{\n'.format(project_name))
-    #         f.write('    var body: some Scene {\n')
-    #         f.write('        WindowGroup {\n')
-    #         f.write('            ContentView()\n')
-    #         f.write('        }\n')
-    #         f.write('    }\n')
-    #         f.write('}\n')
+        with open(os.path.join(main_module_dir, '{}App.swift'.format(project_name)), 'x') as f:
+            f.write('import SwiftUI\n\n')
+            f.write('@main\n')
+            f.write('struct {}App: App {{\n'.format(project_name))
+            f.write('    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate\n\n')
+            f.write('    var body: some Scene {\n')
+            f.write('        WindowGroup {\n')
+            f.write('            ContentView()\n')
+            f.write('        }\n')
+            f.write('    }\n')
+            f.write('}\n\n')
+            f.write('class AppDelegate: NSObject, NSApplicationDelegate {\n')
+            f.write('    func applicationDidFinishLaunching(_ aNotification: Notification) {\n')
+            f.write('        NSApp.setActivationPolicy(.regular)\n')
+            f.write('        NSApp.activate(ignoringOtherApps: true)\n')
+            f.write('        NSApp.windows.first?.makeKeyAndOrderFront(nil)\n')
+            f.write('    }\n\n')
+            f.write('    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {\n')
+            f.write('        true\n')
+            f.write('    }\n')
+            f.write('}\n')
 
-    #     with open(os.path.join(main_module_dir, 'ContentView.swift'), 'x') as f:
-    #         f.write('import SwiftUI\nimport {}\n\n'.format(project_name + 'Bindings'))
-    #         f.write('struct ContentView: View {\n')
-    #         f.write('    @State var a: UInt32 = 5\n')
-    #         f.write('    @State var b: UInt32 = 6\n\n')
-    #         f.write('    var body: some View {\n')
-    #         f.write('        VStack {\n')
-    #         f.write('            Text("Add two numbers using Rust:")\n')
-    #         f.write('            TextField("A", value: self.$a, formatter: NumberFormatter())\n')
-    #         f.write('                .textFieldStyle(.roundedBorder)\n')
-    #         f.write('            TextField("B", value: self.$b, formatter: NumberFormatter())\n')
-    #         f.write('                .textFieldStyle(.roundedBorder)\n')
-    #         f.write('            Divider()\n')
-    #         f.write('            Text("\\(self.a) + \\(self.b) = \\({}.add(a: self.a, b: self.b))")\n'.format(project_name + 'Bindings'))
-    #         f.write('        }.padding()\n')
-    #         f.write('    }\n')
-    #         f.write('}\n')
+        with open(os.path.join(main_module_dir, 'ContentView.swift'), 'x') as f:
+            f.write('import SwiftUI\nimport {}\n\n'.format(project_name + 'Bindings'))
+            f.write('struct ContentView: View {\n')
+            f.write('    @State var a: UInt32 = 5\n')
+            f.write('    @State var b: UInt32 = 6\n\n')
+            f.write('    var body: some View {\n')
+            f.write('        VStack {\n')
+            f.write('            Text("Add two numbers using Rust:")\n')
+            f.write('            TextField("A", value: self.$a, formatter: NumberFormatter())\n')
+            f.write('                .textFieldStyle(.roundedBorder)\n')
+            f.write('            TextField("B", value: self.$b, formatter: NumberFormatter())\n')
+            f.write('                .textFieldStyle(.roundedBorder)\n')
+            f.write('            Divider()\n')
+            f.write('            Text("\\(self.a) + \\(self.b) = \\({}.add(a: self.a, b: self.b))")\n'.format(project_name + 'Bindings'))
+            f.write('        }.padding()\n')
+            f.write('    }\n')
+            f.write('}\n')
 
-    #     regexes_to_replace.append((re.compile(r'\.library\(([\s\n]*)name: "UniFFITemplate"'), r'.executable(\1name: "{}"'.format(project_name)))
-    #     regexes_to_replace.append((re.compile(r'\.target\(([\s\n]*)name: "UniFFITemplate"'), r'.executableTarget(\1name: "{}"'.format(project_name)))
+        regexes_to_replace.append((re.compile(r'products:'), r'platforms: [.macOS(.v11)],\n    products:'.format(project_name)))
+        regexes_to_replace.append((re.compile(r'\.library\(([\s\n]*)name: "UniFFITemplate"'), r'.executable(\1name: "{}"'.format(project_name)))
+        regexes_to_replace.append((re.compile(r'\.target\(([\s\n]*)name: "UniFFITemplate"'), r'.executableTarget(\1name: "{}"'.format(project_name)))
 
 
     regexes_to_replace.append((re.compile(r'UniFFITemplate'), project_name))
@@ -216,11 +228,11 @@ def main(args: list[str]) -> int:
     print('Available project types:')
     print('1. Library')
     print('2. Executable')
-    # print('3. SwiftUI App')
+    print('3. SwiftUI App')
     print('Project type: ', end='')
     project_type_input = input()
-    while not project_type_input.isdigit() or int(project_type_input) not in (1, 2): # , 3):
-        print('Invalid project type. Please enter a number between 1 and 2: ', end='') # 3: ', end='')
+    while not project_type_input.isdigit() or int(project_type_input) not in (1, 2, 3):
+        print('Invalid project type. Please enter a number between 1 and 3: ', end='')
         project_type_input = input()
     project_type = ProjectType(int(project_type_input))
 
