@@ -71,6 +71,12 @@ def setup(project_name: str, project_type: ProjectType, git_repo: bool) -> int:
 
     uniffi_version = os.popen('uniffi-bindgen --version').read().split(' ')[1].strip()
 
+    uniffi_version_major = int(uniffi_version.split('.')[0])
+    uniffi_version_minor = int(uniffi_version.split('.')[1])
+    if uniffi_version_major != 0 or uniffi_version_minor < 21 or uniffi_version_minor > 22:
+        print('uniffi-bindgen version must be 0.21.x or 0.22.x.')
+        return 1
+
     project_name_snake = camel_to_snake(project_name)
 
     main_module_dir = os.path.join(sources_dir, project_name)
@@ -106,9 +112,9 @@ def setup(project_name: str, project_type: ProjectType, git_repo: bool) -> int:
             content = content.replace('UniFFITemplate', project_name)
             content = content.replace('uniffi_template', project_name_snake)
             if file == 'Cargo.toml':
-                content = content.replace('uniffi = "0.21.0"', 'uniffi = "{}"'.format(uniffi_version))
-                content = content.replace('uniffi_macros = "0.21.0"', 'uniffi_macros = "{}"'.format(uniffi_version))
-                content = content.replace('uniffi_build = "0.21.0"', 'uniffi_build = "{}"'.format(uniffi_version))
+                content = content.replace('uniffi = "=0.21.0"', 'uniffi = "={}"'.format(uniffi_version))
+                content = content.replace('uniffi_macros = "=0.21.0"', 'uniffi_macros = "={}"'.format(uniffi_version))
+                content = content.replace('uniffi_build = "=0.21.0"', 'uniffi_build = "={}"'.format(uniffi_version))
             with open(path, 'w') as f:
                 f.write(content)
 
