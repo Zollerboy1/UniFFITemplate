@@ -92,7 +92,13 @@ def main(args: list[str]) -> int:
     if os.path.exists(xcframework_path):
         shutil.rmtree(xcframework_path)
 
-    if os.system('xcrun xcodebuild -create-xcframework -library {} -output {}'.format(os.path.join(cargo_dir, 'target', 'debug' if parsed_args.debug else 'release', 'lib' + project_name_snake + '.a'), xcframework_path)) != 0:
+    if os.path.exists(os.path.join(repo_dir, 'target')):
+        rust_build_root = repo_dir
+    else:
+        rust_build_root = cargo_dir
+
+    built_lib_path = os.path.join(rust_build_root, 'target', 'debug' if parsed_args.debug else 'release', 'lib' + project_name_snake + '.a')
+    if os.system('xcrun xcodebuild -create-xcframework -library {} -output {}'.format(built_lib_path, xcframework_path)) != 0:
         print('Failed to create xcframework.')
         return 1
 
