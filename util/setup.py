@@ -84,6 +84,7 @@ def setup(project_name: str, project_type: ProjectType, git_repo: bool) -> int:
     c_bindings_module_dir = os.path.join(sources_dir, project_name + 'CBindings')
     c_bindings_path = os.path.join(c_bindings_module_dir, project_name + 'CBindings.c')
     c_bindings_header_path = os.path.join(c_bindings_module_dir, 'include', project_name + 'CBindings.h')
+    cargo_toml_path = os.path.join(repo_dir, 'Cargo.toml')
     rust_module_dir = os.path.join(sources_dir, project_name + 'Rust')
     cargo_dir = os.path.join(rust_module_dir, 'cargo')
     cargo_src_dir = os.path.join(cargo_dir, 'src')
@@ -97,7 +98,7 @@ def setup(project_name: str, project_type: ProjectType, git_repo: bool) -> int:
     os.rename(os.path.join(sources_dir, 'UniFFITemplateRust'), rust_module_dir)
     os.rename(os.path.join(cargo_src_dir, 'uniffi_template.udl'), udl_path)
 
-    for path in [c_bindings_path, c_bindings_header_path]:
+    for path in [c_bindings_path, c_bindings_header_path, cargo_toml_path]:
         with open(path, 'r') as f:
             content = f.read()
         content = content.replace('UniFFITemplate', project_name)
