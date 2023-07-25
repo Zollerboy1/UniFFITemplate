@@ -8,11 +8,11 @@ DerivedData/
 .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
 .netrc
 .vscode
+Cargo.lock
 
 __pycache__/
 
 /target/
-/Cargo.lock
 /Sources/*Rust/cargo/target
 /Sources/*Rust/cargo/Cargo.lock
 /Sources/*Rust/include/*.h

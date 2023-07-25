@@ -29,8 +29,6 @@ def main(args: list[str]) -> int:
         return 1
     if not check_command('cargo', 'Cargo', 'https://doc.rust-lang.org/cargo/getting-started/installation.html'):
         return 1
-    if not check_command('uniffi-bindgen', 'uniffi-bindgen', 'https://mozilla.github.io/uniffi-rs/'):
-        return 1
     if not check_command('xcrun', 'Xcode', 'https://developer.apple.com/xcode/'):
         return 1
 
@@ -54,7 +52,7 @@ def main(args: list[str]) -> int:
 
     os.chdir(cargo_dir)
 
-    if os.system('uniffi-bindgen generate --language swift --out-dir {} src/{}.udl'.format(include_dir, project_name_snake)) != 0:
+    if os.system('cargo run --features=uniffi/cli --bin uniffi-bindgen generate --language swift --out-dir {} src/{}.udl'.format(include_dir, project_name_snake)) != 0:
         print('Failed to generate C and Swift bindings.')
         return 1
 

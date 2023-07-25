@@ -59,8 +59,6 @@ def setup(project_name: str, project_type: ProjectType, git_repo: bool) -> int:
         return 1
     if not check_command('cargo', 'Cargo', 'https://doc.rust-lang.org/cargo/getting-started/installation.html'):
         return 1
-    if not check_command('uniffi-bindgen', 'uniffi-bindgen', 'https://mozilla.github.io/uniffi-rs/'):
-        return 1
 
     json_string = os.popen('swift package dump-package').read()
     json_dict = json.loads(json_string)
@@ -69,16 +67,9 @@ def setup(project_name: str, project_type: ProjectType, git_repo: bool) -> int:
         print('This project has already been set up.')
         return 1
 
-    uniffi_version = os.popen('uniffi-bindgen --version').read().split(' ')[1].strip()
-
-    uniffi_version_major = int(uniffi_version.split('.')[0])
-    uniffi_version_minor = int(uniffi_version.split('.')[1])
-    if uniffi_version_major != 0 or uniffi_version_minor < 21 or uniffi_version_minor > 22:
-        print('uniffi-bindgen version must be 0.21.x or 0.22.x.')
-        return 1
-
     project_name_snake = camel_to_snake(project_name)
 
+    gitignore_path = os.path.join(repo_dir, '.gitignore')
     main_module_dir = os.path.join(sources_dir, project_name)
     bindings_module_dir = os.path.join(sources_dir, project_name + 'Bindings')
     c_bindings_module_dir = os.path.join(sources_dir, project_name + 'CBindings')
@@ -98,6 +89,12 @@ def setup(project_name: str, project_type: ProjectType, git_repo: bool) -> int:
     os.rename(os.path.join(sources_dir, 'UniFFITemplateRust'), rust_module_dir)
     os.rename(os.path.join(cargo_src_dir, 'uniffi_template.udl'), udl_path)
 
+    with open(gitignore_path, 'r') as f:
+        content = f.read()
+    content.replace('\nCarg.lock', '')
+    with open(gitignore_path, 'w') as f:
+        f.write(content)
+
     for path in [c_bindings_path, c_bindings_header_path, cargo_toml_path]:
         with open(path, 'r') as f:
             content = f.read()
@@ -112,10 +109,6 @@ def setup(project_name: str, project_type: ProjectType, git_repo: bool) -> int:
                 content = f.read()
             content = content.replace('UniFFITemplate', project_name)
             content = content.replace('uniffi_template', project_name_snake)
-            if file == 'Cargo.toml':
-                content = content.replace('uniffi = "=0.21.0"', 'uniffi = "={}"'.format(uniffi_version))
-                content = content.replace('uniffi_macros = "=0.21.0"', 'uniffi_macros = "={}"'.format(uniffi_version))
-                content = content.replace('uniffi_build = "=0.21.0"', 'uniffi_build = "={}"'.format(uniffi_version))
             with open(path, 'w') as f:
                 f.write(content)
 
@@ -182,7 +175,7 @@ def setup(project_name: str, project_type: ProjectType, git_repo: bool) -> int:
             f.write('    }\n')
             f.write('}\n')
 
-        regexes_to_replace.append((re.compile(r'products:'), r'platforms: [.macOS(.v11)],\n    products:'.format(project_name)))
+        regexes_to_replace.append((re.compile(r'products:'), r'platforms: [.macOS(.v11)],\n    products:'))
         regexes_to_replace.append((re.compile(r'\.library\(([\s\n]*)name: "UniFFITemplate"'), r'.executable(\1name: "{}"'.format(project_name)))
         regexes_to_replace.append((re.compile(r'\.target\(([\s\n]*)name: "UniFFITemplate"'), r'.executableTarget(\1name: "{}"'.format(project_name)))
 

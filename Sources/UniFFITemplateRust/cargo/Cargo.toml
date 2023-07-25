@@ -8,8 +8,11 @@ name = "uniffi_template"
 crate-type = ["staticlib", "cdylib"]
 
 [dependencies]
-uniffi = "=0.21.0"
-uniffi_macros = "=0.21.0"
+uniffi = { version = "0.24.0", features = ["cli"] }
 
 [build-dependencies]
-uniffi_build = "=0.21.0"
+uniffi = { version = "0.24.0", features = ["build"] }
+
+[[bin]]
+name = "uniffi-bindgen"
+path = "uniffi_bindgen.rs"
