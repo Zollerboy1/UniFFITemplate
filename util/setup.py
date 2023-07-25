@@ -222,18 +222,23 @@ def main(args: list[str]) -> int:
         print('Setup script doesn\'t accept any arguments for now.')
         return 2
 
-    print('Project name: ', end='')
-    project_name = input()
+    default_project_name = os.path.basename(repo_dir)
+
+    print('Project name: [{}]'.format(default_project_name), end=' ')
+    project_name = input().strip()
+
+    if project_name == '':
+        project_name = default_project_name
 
     print('Available project types:')
     print('1. Library')
     print('2. Executable')
     print('3. SwiftUI App')
     print('Project type: ', end='')
-    project_type_input = input()
+    project_type_input = input().strip()
     while not project_type_input.isdigit() or int(project_type_input) not in (1, 2, 3):
         print('Invalid project type. Please enter a number between 1 and 3: ', end='')
-        project_type_input = input()
+        project_type_input = input().strip()
     project_type = ProjectType(int(project_type_input))
 
     print('Should a new git repository be setup? [Y/n] ', end='', flush=True)
