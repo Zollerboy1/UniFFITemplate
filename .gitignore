@@ -13,9 +13,9 @@ Cargo.lock
 __pycache__/
 
 /target/
-/Sources/*Rust/cargo/target
-/Sources/*Rust/cargo/Cargo.lock
-/Sources/*Rust/include/*.h
-/Sources/*Rust/include/*.modulemap
-/Sources/*Rust/lib/*.xcframework
-/Sources/*Bindings/*.swift
+/Sources/UniFFITemplateRust/cargo/target
+/Sources/UniFFITemplateRust/cargo/Cargo.lock
+/Sources/UniFFITemplateRust/include/UniFFITemplateRust.h
+/Sources/UniFFITemplateRust/include/UniFFITemplateRust.modulemap
+/Sources/UniFFITemplateRust/lib/UniFFITemplateRust.xcframework
+/Sources/UniFFITemplateBindings/UniFFITemplateBindings.swift

@@ -91,7 +91,8 @@ def setup(project_name: str, project_type: ProjectType, git_repo: bool) -> int:
 
     with open(gitignore_path, 'r') as f:
         content = f.read()
-    content.replace('\nCarg.lock', '')
+    content.replace('\nCargo.lock', '')
+    content.replace('UniFFITemplate', project_name)
     with open(gitignore_path, 'w') as f:
         f.write(content)
 
